@@ -1,0 +1,4 @@
+Model,AUC,Precision,Recall,F1,Lift,Uses Graph
+XGBoost,0.753,0.326,0.558,0.412,2.25,No
+GAT (Ours),0.726,0.349,0.587,0.437,2.41,Yes
+Logistic Regression,0.73,0.301,0.491,0.373,2.08,No

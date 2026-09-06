@@ -1,0 +1,5 @@
+Tier,Count,Pct,Mean_Age,Mean_Units,Mean_Rent_Gap,Mean_Risk
+Tier 1,4090,5.0%,52,105,$676,81%
+Tier 2,16229,20.0%,41,83,$684,45%
+Tier 3,7636,9.4%,54,93,$136,80%
+Tier 4,53322,65.6%,43,57,$27,45%

@@ -1,0 +1,27 @@
+Feature,Mean_Abs_SHAP
+PercentStudioOneBedroom,0.39157793
+TotalUnits,0.3215852
+Vacancy_Rate,0.2543089
+Disability_Rate,0.20523374
+Pop_Density,0.2039425
+Pre1970_Housing_Share,0.20221654
+Poverty_Rate,0.19503044
+Elderly_Share,0.18183672
+PropertyAge,0.16849892
+MonthsToExpire,0.1663273
+Renter_Share,0.16304746
+Median_Household_Income,0.15495335
+FairMarketRent_2BR,0.15243559
+Median_Gross_Rent,0.14698637
+Has_PublicHousing,0.11308403
+Has_Section8,0.070184655
+OwnerType_Public,0.043065865
+OwnerType_Non-Profit,0.034343213
+OwnerType_For-Profit,0.018378995
+NumActivePrograms,0.017993694
+IsMetro,0.016301362
+Has_LIHTC,0.0080523975
+OwnerType_Limited Dividend,0.0065626022
+OwnerType_Multiple,0.006273347
+Has_Section515,0.005893173
+Has_Section202,0.0009840349

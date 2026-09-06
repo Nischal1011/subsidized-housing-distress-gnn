@@ -1,0 +1,12 @@
+Variable,With REAC (Mean),With REAC (SD),Without REAC (Mean),Without REAC (SD),p-value
+Property Age (years),42.2,12.9,43.5,17.9,0.0000***
+Total Units,82.4,84.4,66.8,96.0,0.0000***
+Occupancy Rate (%),91.9,10.2,92.8,9.3,0.0000***
+Median Household Income ($),61547.7,30765.4,63312.8,30649.2,0.0000***
+Median Gross Rent ($),1140.0,478.5,1150.9,485.0,0.0797
+Poverty Rate (%),20.9,13.1,19.9,12.8,0.0000***
+Vacancy Rate (%),10.9,8.4,11.3,8.8,0.0018**
+Section 8 (%),85.3,-,21.7,-,0.0000***
+LIHTC (%),24.6,-,41.6,-,0.0000***
+Public Housing (%),0.7,-,7.9,-,0.0000***
+Section 515 (%),2.9,-,15.7,-,0.0000***

@@ -1,0 +1,6 @@
+Risk_Factors,Properties,Units,Pct_Total,Most_Common_Combination,Top_States,Mean_GNN_Risk,Mean_Rent_Gap,Mean_Age
+4 of 4,355,27669,0.4%,Distress+Rent Gap+Expiring+Old,"CA (71), NY (32), TX (24)",63%,$485,58
+3 of 4,8786,880623,10.8%,Distress+Rent Gap+Old,"NY (1068), CA (850), TX (524)",62%,$476,58
+2 of 4,26190,2230049,32.2%,Distress+Rent Gap,"CA (2647), NY (2085), TX (1720)",58%,$368,48
+1 of 4,30782,1758213,37.9%,Rent Gap,"CA (2551), NY (1684), TX (1404)",51%,$147,39
+0 of 4,15164,639861,18.7%,None,"PA (786), OH (760), IL (759)",44%,$-141,31

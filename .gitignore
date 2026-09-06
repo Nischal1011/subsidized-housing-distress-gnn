@@ -1,0 +1,29 @@
+.venv/
+.env
+.DS_Store
+__pycache__/
+*.pyc
+
+# Large third-party source data (see README for how to obtain)
+data/
+
+# Large / regenerable model artifacts and raw per-property outputs
+outputs/*.pt
+outputs/*.joblib
+outputs/*.parquet
+outputs/integrated_policy_matrix*.csv
+outputs/policy_matrix_gat.csv
+outputs/final_submission_results.csv
+outputs/uninspected_risk_scores.csv
+outputs/uninspected_priority_list.csv
+outputs/uninspected_scored_full.parquet
+outputs/all_properties_risk_scores.csv
+outputs/high_priority_inspection_list.csv
+outputs/gnn_predictions.csv
+outputs/gnn_refined_predictions.csv
+outputs/gnn_final_predictions.csv
+outputs/enhanced_gnn_predictions.csv
+
+# Not part of the published pipeline
+archive/
+docs/

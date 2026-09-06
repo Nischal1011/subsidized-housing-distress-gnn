@@ -1,0 +1,38 @@
+Variable,Value
+Panel A: Dataset Overview,
+Total properties,"81,277"
+Total units,"5,536,415"
+States covered,53
+Counties covered,"3,055"
+Census tracts,"34,794"
+Unique owners,"53,829"
+,
+Panel B: REAC Inspection Coverage,
+Properties with REAC score,"6,724 (8.3%)"
+Properties without REAC score,"74,553 (91.7%)"
+Labeled as distressed (REAC < 60),"1,793 (14.5% of labeled)"
+,
+Panel C: Subsidy Program Participation,
+Section 8 (Project-Based),"21,911 (27.0%)"
+Low-Income Housing Tax Credit (LIHTC),"32,698 (40.2%)"
+Section 515 (Rural Housing),"11,926 (14.7%)"
+Public Housing,"5,945 (7.3%)"
+Section 202 (Elderly Housing),700 (0.9%)
+HOME Investment Partnerships,"15,783 (19.4%)"
+Section 236,6 (0.0%)
+,
+Panel D: Property Characteristics,
+Property age (years),43.2 ± 17.0
+  Median,45
+  Range,-29 - 125
+Total units per property,68.1 ± 95.2
+  Median,43
+  Range,1 - 5881
+Occupancy rate (%),92.6 ± 9.5
+,
+Panel E: Neighborhood Characteristics,
+Median household income ($),"63,167 ± 30,663"
+Median gross rent ($),1150 ± 485
+Poverty rate (%),20.0 ± 12.8
+Vacancy rate (%),11.2 ± 8.8
+Severe rent burden rate (%),23.3 ± 11.8

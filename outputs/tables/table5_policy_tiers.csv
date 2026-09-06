@@ -1,0 +1,5 @@
+Tier,Definition,N Properties,% of Total,Mean Age,Mean Units,Mean Rent Gap,Mean Distress Risk,Recommended Intervention
+Tier 1: Crisis,High distress + High rent gap,"4,090",5.0%,52,105,$676,81%,"Emergency intervention, acquisition"
+Tier 2: Preservation,Low distress + High rent gap,"16,229",20.0%,41,83,$684,45%,"Contract renewal, nonprofit transfer"
+Tier 3: Rehab,High distress + Low rent gap,"7,636",9.4%,54,93,$136,80%,"Capital grants, rehabilitation"
+Tier 4: Stable,Low distress + Low rent gap,"53,322",65.6%,43,57,$27,45%,Routine monitoring

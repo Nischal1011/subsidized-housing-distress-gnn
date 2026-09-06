@@ -1,0 +1,5 @@
+Tier,Property Age (years),Total Units,Rent Gap ($/month),Distress Probability,Poverty Rate (%),Vacancy Rate (%),Occupancy Rate (%)
+Tier 1,52.3,104.6,$676,81%,28.0%,11.1%,88.1%
+Tier 2,40.7,82.8,$684,45%,23.9%,9.8%,94.1%
+Tier 3,54.3,93.3,$136,80%,25.4%,15.6%,87.7%
+Tier 4,42.5,57.3,$27,45%,17.3%,11.1%,92.9%

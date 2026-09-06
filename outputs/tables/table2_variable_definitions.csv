@@ -1,0 +1,33 @@
+Variable,Type,Description
+Outcome Variable,,
+Physical Distress,Binary,REAC inspection score < 60 (scale 0-100)
+,,
+Key Constructed Variables,,
+True Rent Gap,Continuous ($),"Market Rent - Restricted Rent, where Restricted Rent = (Tract AMI × 0.60 × 0.30) / 12"
+GNN Distress Probability,Continuous (0-1),Predicted probability of physical distress from Graph Attention Network
+Policy Tier,Categorical,Four-tier classification based on distress risk and rent gap
+,,
+Graph Network Features,,
+Ownership Edges,Network,Properties connected if they share the same owner
+Spatial Edges,Network,Properties connected if within 8km (k=15 nearest neighbors)
+Tract Edges,Network,Properties connected if in the same census tract
+,,
+Property Characteristics,,
+Property Age,Continuous (years),Years since earliest construction date
+Total Units,Continuous,Number of housing units in property
+Occupancy Rate,Continuous (%),Percentage of units currently occupied
+Owner Portfolio Size,Continuous,Number of properties owned by same owner
+,,
+Neighborhood Characteristics (ACS 5-Year),,
+Median Household Income,Continuous ($),Census tract median household income
+Median Gross Rent,Continuous ($),Census tract median gross rent
+Poverty Rate,Continuous (%),Percentage of population below poverty line
+Vacancy Rate,Continuous (%),Percentage of housing units vacant
+Severe Rent Burden Rate,Continuous (%),Percentage of renters paying >50% income on rent
+Pre-1970 Housing Share,Continuous (%),Percentage of housing built before 1970
+,,
+Program Indicators,,
+Has Section 8,Binary,Property has active Section 8 project-based assistance
+Has LIHTC,Binary,Property has active Low-Income Housing Tax Credit
+Has Public Housing,Binary,Property is public housing
+Has Section 515,Binary,Property has USDA Section 515 rural housing loan
