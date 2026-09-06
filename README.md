@@ -9,10 +9,12 @@ Code accompanying the paper **"A Graph Neural Network Approach to Physical Distr
 - [Overview](#overview)
 - [Key Ideas](#key-ideas)
 - [Results at a Glance](#results-at-a-glance)
+- [Relationship to the Published Results](#relationship-to-the-published-results)
 - [Repository Structure](#repository-structure)
 - [Setup](#setup)
 - [Reproducing the Analysis](#reproducing-the-analysis)
 - [Data & Model Availability](#data--model-availability)
+- [License](#license)
 - [Citation](#citation)
 - [Contact](#contact)
 
@@ -34,7 +36,21 @@ Housing agencies must decide which of tens of thousands of subsidized properties
 - Cross-program transfer (training on federally-inspected properties, evaluating on state-administered LIHTC properties) shows a substantial performance drop, underscoring that program-specific model development is needed before operational deployment outside HUD-administered programs.
 - Crossing physical-distress predictions with economic pressure, subsidy-expiration timelines, and property age identifies a small set of properties facing multiple simultaneous preservation threats, which cluster geographically in a handful of states.
 
-Exact figures are in the paper; this repository reproduces the pipeline that produced them, and some values may vary slightly between runs due to model retraining.
+Exact figures are reported in the paper; see the next section for how this repository relates to those published numbers.
+
+## Relationship to the Published Results
+
+This repository provides a cleaned reference implementation of the analytical
+workflow described in the article. It is intended to reproduce the methodology,
+comparative patterns, and substantive conclusions rather than provide
+bit-for-bit replication of every numerical estimate reported in the paper.
+
+Exact values may differ from the published results because of stochastic neural
+network training, software and dependency versions, regenerated intermediate
+data, and subsequent implementation refinements. The peer-reviewed article is
+the authoritative source for the reported numerical results. Repository outputs
+should therefore be interpreted as replication and diagnostic materials rather
+than as a frozen archive of the accepted manuscript run.
 
 ## Repository Structure
 
@@ -91,6 +107,10 @@ This repository contains code and summary outputs, not the underlying source dat
 - **Property-level details** for the highest-risk properties identified in the paper are available from the corresponding author upon reasonable request.
 
 To reproduce the analysis, place the corresponding data files in a local `data/` directory (see each pipeline script's `CONFIG['input_file']` for expected filenames) and run the pipeline in order.
+
+## License
+
+This code is released under the [MIT License](LICENSE).
 
 ## Citation
 

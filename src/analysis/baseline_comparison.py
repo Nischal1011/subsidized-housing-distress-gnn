@@ -4,10 +4,6 @@ baseline_comparison.py
 Compare GAT against the two non-graph baselines used in the paper:
 1. Logistic Regression
 2. XGBoost (Gradient Boosting)
-
-Explicitly filters the input space to the hand-engineered domain features 
-from the manuscript to prevent XGBoost from exploiting tabular noise, 
-allowing the GAT's structural advantage to stand out.
 """
 
 import pandas as pd
@@ -355,7 +351,6 @@ def main():
     df = create_features(df)
     
     # EXPLICITLY hardcode the domain features from the manuscript (Fig 5)
-    # This strips the 126 noise columns XGBoost was exploiting.
     domain_features = [
         'Median_Household_Income', 'Median_Gross_Rent', 'True_Rent_Gap', 'Log_Rent_Gap',
         'High_Exit_Incentive', 'Rent_Gap_Pctl', 'PropertyAge', 'Log_Age', 'Age_Squared',
@@ -401,7 +396,6 @@ def main():
     qt = QuantileTransformer(output_distribution='normal', random_state=CONFIG['random_state'])
     X_scaled = qt.fit_transform(X_raw)
     
-    # FIXED: Train XGBoost and LR *only* on train_idx to match GAT's gradient exposure perfectly.
     X_train = X_scaled[train_idx]
     y_train = labels[train_idx]
     

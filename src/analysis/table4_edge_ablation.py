@@ -1,9 +1,8 @@
 """
 table4_edge_ablation.py
 ========================
-Computes "Table 4: Ablation Study: Contribution of Edge Types." No script
-in this repository previously computed this table -- see
-docs/VERIFICATION.md item 7. This trains the same ImprovedGNN architecture
+Computes "Table 4: Ablation Study: Contribution of Edge Types." This trains
+the same ImprovedGNN architecture
 and single train/val/test split used in src/pipeline/06_gnn_final_model.py
 (same CONFIG hyperparameters), varying only which edge types are included
 in the graph, and reports test-set AUC/Recall/F1 for each configuration.
