@@ -68,7 +68,7 @@ Run the scripts in `src/pipeline/` in order from the repository root:
 | 2 | `02_baseline_xgboost_model.py` | Trains the XGBoost baseline model with SHAP explanations |
 | 3 | `04_gnn_semi_supervised.py`, `05_gnn_enhanced.py` | Earlier graph-model iterations |
 | 4 | `06_gnn_final_model.py` | The final Graph Attention Network used for the paper's headline results |
-| 5 | `08_validate_hidden_risk.py` | Sanity-checks the distress-rate gap between labeled and unlabeled properties |
+| 5 | `07_validate_hidden_risk.py` | Sanity-checks the distress-rate gap between labeled and unlabeled properties |
 
 `src/analysis/` contains the scripts that turn pipeline outputs into the paper's specific tables and figures — most notably:
 

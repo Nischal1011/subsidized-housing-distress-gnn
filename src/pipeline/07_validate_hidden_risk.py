@@ -1,5 +1,5 @@
 """
-08_validate_hidden_risk.py
+07_validate_hidden_risk.py
 ==========================
 Sanity check the "Hidden Risk" narrative.
 1. Compare Base Rate (Labeled) vs. Predicted Rate (Unlabeled).
