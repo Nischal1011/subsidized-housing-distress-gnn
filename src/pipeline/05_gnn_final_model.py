@@ -1,19 +1,28 @@
 """
-06_gnn_final_model.py
+05_gnn_final_model.py
 ======================
-The final GAT model used for the paper's headline results (Table 2, Table 4,
-Table 6, Table 8). Writes outputs/integrated_policy_matrix_v2.csv, which
-feeds Table 5, Table 9, and the compounded-risk analysis. NOTE: Table 7,
-Table 11, and Figures 2/4/7 were built from an older run's output,
-outputs/integrated_policy_matrix.csv (no "_v2" suffix).
+The final GAT model described in the paper's Methods (Sections 3.4-3.5):
+an input projection, two GAT layers (4 heads), two GraphSAGE layers with
+residual connections and layer normalization, trained with class-weighted
+focal loss and early stopping on validation AUC.
 
-Feature engineering, the domain feature list, graph construction, model
-architecture, and the single train/val/test split are identical to
-src/analysis/baseline_comparison.py, so the GAT trained here uses the exact
-same logic as the one compared against XGBoost/Logistic Regression there.
-This script additionally does what baseline_comparison.py does not: scores
-every property (including the 68,892 without REAC labels) and builds the
-policy tier assignment.
+Scores every property, including the 68,892 without REAC labels, and writes
+outputs/integrated_policy_matrix_v2.csv for the screening matrix and the
+compounded-risk analysis. The classification threshold is the F1-maximizing
+threshold on the validation set.
+
+The same feature engineering, feature list, graph, model, and train/val/test
+split are used by src/analysis/baseline_comparison.py (Table 2 model
+comparison and Table 3 fixed-budget capture) and
+src/analysis/table8_attention_weights.py (Table 8). The edge ablation
+(src/analysis/table4_edge_ablation.py, Table 4) uses the same graph rules,
+architecture, and hyperparameters; see its docstring for its feature set.
+
+NOTE: several downstream scripts (paper_figures.py, paper_analysis.py,
+data_summary_tables.py, geographic_rate.py, 06_validate_hidden_risk.py) read
+outputs/integrated_policy_matrix.csv, the output of an earlier run used for
+the paper's geographic and screening-category tables and figures. To rerun
+them on this model's output, copy integrated_policy_matrix_v2.csv to that name.
 """
 
 import pandas as pd
@@ -142,7 +151,7 @@ DOMAIN_FEATURES = [
     'CountyCode', 'AverageMonthsOfTenancy', 'Gini_Index_Income_Inequality',
     'Disability_Rate', 'OldNHPDPropertyID', 'PercentStudioOneBedroom', 'Total_Population',
     'Pre1970_Housing_Share', 'Elderly_Share', 'Pop_Density', 'Median_Housing_Value',
-    'Section8', 'LIHTC', 'PublicHousing', 'HOME'
+    'Has_Section8', 'Has_LIHTC', 'Has_PublicHousing', 'Has_HOME'
 ]
 
 
@@ -372,10 +381,10 @@ def main():
 
     probs = train_gnn(df, X_scaled, labels, train_idx, val_idx, CONFIG)
 
-    # Optimal threshold, found the same way as baseline_comparison.py's
-    # evaluate_model(): F1-maximizing threshold on the test set.
+    # F1-maximizing threshold chosen on the validation set (same as
+    # baseline_comparison.py), then applied unchanged to the test set.
+    opt_thresh = find_optimal_threshold(labels[val_idx], probs[val_idx])
     test_probs, test_labels = probs[test_idx], labels[test_idx]
-    opt_thresh = find_optimal_threshold(test_labels, test_probs)
     test_preds = (test_probs >= opt_thresh).astype(int)
 
     print(f"\n  Optimal Threshold: {opt_thresh:.4f}")

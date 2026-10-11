@@ -330,7 +330,7 @@ def run_gat_full_graph(df, X_scaled_sel, labels, train_idx, val_idx, test_idx, c
         out = model(data.x, data.edge_index)
         probs = F.softmax(out, dim=1)[:, 1].cpu().numpy()
 
-    return probs[test_idx]
+    return probs[val_idx], probs[test_idx]
 
 # =============================================================================
 # MAIN COMPARISON
@@ -362,7 +362,7 @@ def main():
         'CountyCode', 'AverageMonthsOfTenancy', 'Gini_Index_Income_Inequality',
         'Disability_Rate', 'OldNHPDPropertyID', 'PercentStudioOneBedroom', 'Total_Population',
         'Pre1970_Housing_Share', 'Elderly_Share', 'Pop_Density', 'Median_Housing_Value',
-        'Section8', 'LIHTC', 'PublicHousing', 'HOME'
+        'Has_Section8', 'Has_LIHTC', 'Has_PublicHousing', 'Has_HOME'
     ]
     
     feature_cols = [c for c in domain_features if c in df.columns]
@@ -399,6 +399,9 @@ def main():
     X_train = X_scaled[train_idx]
     y_train = labels[train_idx]
     
+    X_val = X_scaled[val_idx]
+    y_val = labels[val_idx]
+
     X_test = X_scaled[test_idx]
     y_test = labels[test_idx]
 
@@ -419,7 +422,8 @@ def main():
     lr.fit(X_train, y_train)
     
     lr_probs_test = lr.predict_proba(X_test)[:, 1]
-    lr_result = evaluate_model("Logistic Regression", y_test, lr_probs_test)
+    lr_thresh = find_optimal_threshold(y_val, lr.predict_proba(X_val)[:, 1])
+    lr_result = evaluate_model("Logistic Regression", y_test, lr_probs_test, threshold=lr_thresh)
     results.append(lr_result)
     models['Logistic'] = (lr, lr_probs_test)
     
@@ -441,7 +445,8 @@ def main():
     xgb.fit(X_train, y_train)
     
     xgb_probs_test = xgb.predict_proba(X_test)[:, 1]
-    xgb_result = evaluate_model("XGBoost", y_test, xgb_probs_test)
+    xgb_thresh = find_optimal_threshold(y_val, xgb.predict_proba(X_val)[:, 1])
+    xgb_result = evaluate_model("XGBoost", y_test, xgb_probs_test, threshold=xgb_thresh)
     results.append(xgb_result)
     models['XGBoost'] = (xgb, xgb_probs_test)
     
@@ -450,8 +455,9 @@ def main():
     print(f"  Recall: {xgb_result['Recall']:.4f}")
     print(f"  F1: {xgb_result['F1']:.4f}")
     
-    gat_probs_test = run_gat_full_graph(df, X_scaled, labels, train_idx, val_idx, test_idx, CONFIG)
-    gat_result = evaluate_model("GAT (Graph)", y_test, gat_probs_test)
+    gat_probs_val, gat_probs_test = run_gat_full_graph(df, X_scaled, labels, train_idx, val_idx, test_idx, CONFIG)
+    gat_thresh = find_optimal_threshold(y_val, gat_probs_val)
+    gat_result = evaluate_model("GAT (Graph)", y_test, gat_probs_test, threshold=gat_thresh)
     results.append(gat_result)
     models['GAT (Graph)'] = (None, gat_probs_test)
 
@@ -515,6 +521,27 @@ def main():
     print(importance_df.head(15).to_string(index=False))
     
     results_df.to_csv(f"{CONFIG['output_dir']}/baseline_comparison.csv", index=False)
+
+    # Table 3: share of test-set distressed properties captured when inspecting
+    # the top-k% of the test set ranked by each method.
+    age_col = 'PropertyAge' if 'PropertyAge' in df.columns else None
+    rankers = {name: probs for name, (_, probs) in models.items()}
+    if age_col:
+        rankers['Age-based'] = df[age_col].fillna(df[age_col].median()).values[test_idx]
+    capture_rows = []
+    n_pos_test = y_test.sum()
+    for name, scores in rankers.items():
+        order = np.argsort(-scores, kind='stable')
+        row = {'Method': name}
+        for budget in [0.10, 0.20, 0.30, 0.50]:
+            k = int(round(budget * len(y_test)))
+            row[f'Capture@{int(budget*100)}%'] = y_test[order[:k]].sum() / n_pos_test
+        capture_rows.append(row)
+    capture_rows.append({'Method': 'Random', **{f'Capture@{b}%': b / 100 for b in [10, 20, 30, 50]}})
+    capture_df = pd.DataFrame(capture_rows)
+    print("\nFixed-budget capture (Table 3):")
+    print(capture_df.to_string(index=False))
+    capture_df.to_csv(f"{CONFIG['output_dir']}/fixed_budget_capture.csv", index=False)
     importance_df.to_csv(f"{CONFIG['output_dir']}/feature_importance_xgb.csv", index=False)
     
     print("\n" + "="*70)
@@ -533,7 +560,8 @@ Table X: Model Comparison for Physical Distress Prediction
     print("""
 Notes:
 - Base rate (distress prevalence): {:.1f}%
-- All models trained on identical features and train/test splits
+- All models trained on identical features and train/val/test splits;
+  classification thresholds chosen to maximize F1 on the validation set
 - GAT additionally leverages ownership network and spatial proximity structure
 - Lift = Precision / Base Rate (improvement over random selection)
 """.format(distress_rate * 100))

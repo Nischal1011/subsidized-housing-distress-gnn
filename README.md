@@ -79,12 +79,13 @@ Run the scripts in `src/pipeline/` in order from the repository root:
 
 `src/analysis/` contains the scripts that turn pipeline outputs into the paper's specific tables and figures. Most notably:
 
-* `baseline_comparison.py` — trains and evaluates the GAT alongside Logistic Regression and XGBoost on an identical train/validation/test split, for a direct model comparison
-* `cross_program_validation.py` — the Section 8 → LIHTC generalization test
-* `analyze_urban_rural_perf.py` — performance stratified by urban/suburban/rural context
+* `baseline_comparison.py` — trains and evaluates the GAT alongside Logistic Regression and XGBoost on an identical train/validation/test split (Table 2), and computes fixed-budget capture rates (Table 3); classification thresholds are chosen on the validation set
+* `cross_program_validation.py` — the Section 8 → LIHTC generalization test (Table 6)
+* `analyze_urban_rural_perf.py` — performance stratified by urban/suburban/rural context (Table 5)
 * `integration_table.py` / `paper_analysis.py` — the compounded-risk and screening-category analyses
-* `table4_edge_ablation.py` — ablation study isolating the contribution of each edge type
-* `table8_attention_weights.py` — learned attention weight by edge type
+* `table4_edge_ablation.py` — ablation study isolating the contribution of each edge type (Table 4)
+* `table8_attention_weights.py` — mean learned attention weight by edge type (Table 8)
+* `check_ownership_attention_logic.py` — checks the attention extraction and shows why per-edge attention depends on node degree
 
 See each script's docstring for full details on what it produces.
 

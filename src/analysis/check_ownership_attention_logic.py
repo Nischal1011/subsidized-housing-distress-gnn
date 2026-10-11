@@ -33,7 +33,8 @@ import torch.nn.functional as F
 from torch_geometric.nn import GATConv
 
 sys.path.insert(0, 'src/analysis')
-import table8_attention_weights as t8  # reuse build_graph_with_types, create_features, model classes
+import table8_attention_weights as t8  # reuse build_graph_with_types and the probeable model
+fm = t8.final_model                    # 05_gnn_final_model.py: create_features, DOMAIN_FEATURES, FocalLoss
 
 torch.manual_seed(0)
 np.random.seed(0)
@@ -53,7 +54,7 @@ def part_a_synthetic_check():
 
     edge_index = torch.tensor(directed, dtype=torch.long).t()
     edge_type = torch.tensor(types, dtype=torch.long)
-    # same manual symmetrization as build_graph_with_types
+    # symmetrize and add self-loops, as build_graph_with_types does
     edge_index = torch.cat([edge_index, edge_index.flip(0)], dim=1)
     edge_type = torch.cat([edge_type, edge_type])
     self_loops = torch.arange(n, dtype=torch.long)
@@ -101,15 +102,16 @@ def part_b_real_degree_structure():
     print("=" * 70)
 
     df = pd.read_parquet('data/merged_analysis_data.parquet').reset_index(drop=True)
-    df = t8.create_features(df)
+    df = fm.create_features(df)
 
-    edge_index, edge_type = t8.build_graph_with_types(df, t8.CONFIG)
+    np.random.seed(t8.CONFIG['random_state'])
+    edge_index, type_masks = t8.build_graph_with_types(df, t8.CONFIG)
     n = len(df)
     print(f"  Full data: {n:,} properties, {edge_index.shape[1]:,} directed edge entries")
 
     # per-node degree, split by whether the edge is ownership or not
     src = edge_index[0]
-    is_ownership = (edge_type == 0)
+    is_ownership = torch.tensor(type_masks['Ownership'])
 
     total_degree = torch.zeros(n, dtype=torch.long)
     ownership_degree = torch.zeros(n, dtype=torch.long)
@@ -143,21 +145,15 @@ def part_c_quick_real_softmax_check():
 
     df = pd.read_parquet('data/merged_analysis_data.parquet').reset_index(drop=True)
     df = df.sample(n=5000, random_state=0).reset_index(drop=True)
-    df = t8.create_features(df)
-
-    exclude_cols = ['PhysicalDistress', 'BestReacScore', 'ReacScore1', 'ReacScore2', 'ReacScore3',
-                     'NHPDPropertyID', 'Latitude', 'Longitude', 'CensusTract', 'PropertyName',
-                     'PropertyAddress', 'Owner', 'Owner_Clean', 'City', 'State', 'Zip',
-                     'Policy_Tier', 'GNN_Risk', 'GNN_HighRisk']
-    num_cols = df.select_dtypes(include=[np.number]).columns.tolist()
-    feature_cols = [c for c in num_cols if c not in exclude_cols]
+    df = fm.create_features(df)
+    feature_cols = [c for c in fm.DOMAIN_FEATURES if c in df.columns]
 
     from sklearn.preprocessing import QuantileTransformer
     X_raw = df[feature_cols].fillna(0).values
     qt = QuantileTransformer(output_distribution='normal', random_state=0, n_quantiles=min(1000, len(df)))
     x_tensor = torch.tensor(qt.fit_transform(X_raw), dtype=torch.float32)
 
-    edge_index, edge_type = t8.build_graph_with_types(df, t8.CONFIG)
+    edge_index, type_masks = t8.build_graph_with_types(df, t8.CONFIG)
     print(f"  {len(df):,}-property subset: {edge_index.shape[1]:,} directed edge entries")
 
     labels = df['PhysicalDistress'].fillna(-1).values.astype(int)
@@ -176,7 +172,7 @@ def part_c_quick_real_softmax_check():
 
     model = t8.ImprovedGNNProbeable(in_dim=data.num_features, hidden_dim=64, num_layers=4, dropout=0.4, heads=4)
     optimizer = torch.optim.AdamW(model.parameters(), lr=0.001)
-    criterion = t8.FocalLoss()
+    criterion = fm.FocalLoss()
     for epoch in range(30):
         model.train()
         optimizer.zero_grad()
@@ -188,9 +184,9 @@ def part_c_quick_real_softmax_check():
 
     model.eval()
     with torch.no_grad():
-        ei_out, alpha = model.layer_attention(data.x, data.edge_index, 0)
+        alpha = model.layer_attention(data.x, data.edge_index, 0)
     alpha = alpha.numpy()
-    targets = ei_out[1].numpy()
+    targets = data.edge_index[1].numpy()
 
     sums = pd.Series(alpha).groupby(targets).sum()
     print(f"\n  Softmax check across {len(sums):,} real nodes (real trained attention):")
@@ -198,11 +194,10 @@ def part_c_quick_real_softmax_check():
     print(f"    min: {sums.min():.6f}   max: {sums.max():.6f}")
     print(f"    ALL within 1e-3 of 1.0: {bool((sums.sub(1.0).abs() < 1e-3).all())}")
 
-    edge_type_np = edge_type.numpy()
     print("\n  By-type means on this quick/small run (not comparable in scale to the full run,")
     print("  just confirming ownership doesn't come out an obvious outlier/bug here either):")
-    for t, name in t8.EDGE_TYPE_NAMES.items():
-        mask = edge_type_np == t
+    for name in t8.EDGE_TYPES:
+        mask = type_masks[name]
         if mask.sum() == 0:
             continue
         print(f"    {name:10s}: mean={alpha[mask].mean():.4f}  n={mask.sum():,}")

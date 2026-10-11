@@ -2,10 +2,14 @@
 table4_edge_ablation.py
 ========================
 Computes "Table 4: Ablation Study: Contribution of Edge Types." This trains
-the same ImprovedGNN architecture
-and single train/val/test split used in src/pipeline/06_gnn_final_model.py
-(same CONFIG hyperparameters), varying only which edge types are included
-in the graph, and reports test-set AUC/Recall/F1 for each configuration.
+the same ImprovedGNN architecture and hyperparameters as
+src/pipeline/05_gnn_final_model.py, varying only which edge types are
+included in the graph, and reports test-set AUC/Recall/F1 for each
+configuration. Every configuration shares one stratified 70/15/15 split and
+the decision threshold is chosen on the validation set. This script uses all
+numeric non-identifier columns as features and draws its own split, so its
+full-graph AUC is not identical to the Table 2 value from
+baseline_comparison.py; the comparison of interest is between rows.
 
 The six rows match the paper's Table 4:
   1. Full graph (all edges)
@@ -87,7 +91,7 @@ EDGE_CONFIGS = [
 
 
 # =============================================================================
-# FEATURE ENGINEERING (identical to 06_gnn_final_model.py)
+# FEATURE ENGINEERING (identical to 05_gnn_final_model.py)
 # =============================================================================
 
 def create_features(df):
@@ -151,7 +155,7 @@ def create_features(df):
 
 
 # =============================================================================
-# GRAPH CONSTRUCTION (identical to 06_gnn_final_model.py's build_graph,
+# GRAPH CONSTRUCTION (identical to 05_gnn_final_model.py's build_graph,
 # parameterized by which edge types to include)
 # =============================================================================
 
@@ -227,7 +231,7 @@ def build_graph(df, use_owner_edges, use_tract_edges, use_knn_edges, config):
 
 
 # =============================================================================
-# MODEL (identical to 06_gnn_final_model.py's ImprovedGNN)
+# MODEL (identical to 05_gnn_final_model.py's ImprovedGNN)
 # =============================================================================
 
 class ImprovedGNN(nn.Module):

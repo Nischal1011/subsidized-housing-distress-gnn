@@ -354,38 +354,12 @@ def create_table4_model_comparison():
     """Create model comparison table with results from baseline analysis."""
     print("\nCreating Table 4: Model Comparison...")
     
-    # Results from your baseline comparison run
-    models = [
-        {
-            'Model': 'XGBoost',
-            'AUC': 0.753,
-            'Precision': 0.326,
-            'Recall': 0.558,
-            'F1': 0.412,
-            'Lift': 2.25,
-            'Uses Graph': 'No'
-        },
-        {
-            'Model': 'GAT (Ours)',
-            'AUC': 0.726,
-            'Precision': 0.349,
-            'Recall': 0.587,
-            'F1': 0.437,
-            'Lift': 2.41,
-            'Uses Graph': 'Yes'
-        },
-        {
-            'Model': 'Logistic Regression',
-            'AUC': 0.730,
-            'Precision': 0.301,
-            'Recall': 0.491,
-            'F1': 0.373,
-            'Lift': 2.08,
-            'Uses Graph': 'No'
-        },
-    ]
-    
-    model_df = pd.DataFrame(models)
+    # Read the results written by src/analysis/baseline_comparison.py
+    # (single shared train/val/test split; thresholds chosen on validation).
+    model_df = pd.read_csv('outputs/baseline_comparison.csv')
+    model_df['Model'] = model_df['Model'].replace({'GAT (Graph)': 'GAT (Ours)'})
+    model_df['Uses Graph'] = np.where(model_df['Model'].str.startswith('GAT'), 'Yes', 'No')
+    model_df = model_df[['Model', 'AUC', 'Precision', 'Recall', 'F1', 'Lift', 'Uses Graph']]
     
     # Format for display
     display_df = model_df.copy()
@@ -404,7 +378,8 @@ def create_table4_model_comparison():
     print("- All models trained on identical features (n=173) and train/test splits")
     print("- Lift = Precision / Base Rate (improvement over random selection)")
     print("- GAT additionally leverages ownership network and spatial proximity structure")
-    print("- Best values in each column: AUC (XGBoost), Recall (GAT), F1 (GAT)")
+    best = {c: model_df.loc[model_df[c].idxmax(), 'Model'] for c in ['AUC', 'Recall', 'F1']}
+    print(f"- Best values in each column: AUC ({best['AUC']}), Recall ({best['Recall']}), F1 ({best['F1']})")
     
     model_df.to_csv(f"{CONFIG['output_dir']}/table4_model_comparison.csv", index=False)
     print(f"\nSaved to {CONFIG['output_dir']}/table4_model_comparison.csv")

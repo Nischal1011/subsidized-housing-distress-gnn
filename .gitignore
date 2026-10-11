@@ -32,3 +32,11 @@ outputs/tier_examples.csv
 # Not part of the published pipeline
 archive/
 docs/
+
+# Journal proof and private correction notes (not for the public repo)
+proof.pdf
+PROOF_CORRECTIONS.md
+paper/
+TEX_CORRECTIONS.md
+daps*.pdf
+FINAL_PROOF_EDITS.md

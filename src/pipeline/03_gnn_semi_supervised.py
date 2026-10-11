@@ -1,5 +1,5 @@
 """
-04_gnn_semi_supervised.py
+03_gnn_semi_supervised.py
 =========================
 Graph Neural Network for Semi-Supervised Physical Distress Prediction
 
